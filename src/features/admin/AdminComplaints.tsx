@@ -1,0 +1,14 @@
+import { useEffect, useState } from "react";
+import { Search, RefreshCw, Save } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { adminApi } from "../../lib/api";
+
+export default function AdminComplaints(){
+ const {t}=useTranslation(); const [items,setItems]=useState<any[]>([]);const [q,setQ]=useState("");const [status,setStatus]=useState("");const [loading,setLoading]=useState(true);
+ const load=async()=>{setLoading(true);try{const r=await adminApi.complaints({q,status});setItems(r.complaints)}finally{setLoading(false)}}; useEffect(()=>{void load()},[status]);
+ const update=async(id:string,next:string,notes:string)=>{await adminApi.updateComplaint(id,{status:next,notes});void load()};
+ return <div><div className="gls-admin-page-title"><div><p>{t("admin.nav.complaints")}</p><h1>{t("admin.complaints.title")}</h1><span>{t("admin.complaints.subtitle")}</span></div><button onClick={()=>void load()} className="gls-admin-refresh"><RefreshCw size={16}/>{t("admin.common.refresh")}</button></div>
+ <section className="gls-admin-card-v2"><div className="gls-admin-toolbar"><div className="gls-admin-searchbox"><Search size={17}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder={t("admin.complaints.search")}/></div><select value={status} onChange={e=>setStatus(e.target.value)}><option value="">{t("admin.common.allStatus")}</option><option>Submitted</option><option>In Review</option><option>Resolved</option><option>Rejected</option></select><button className="gls-admin-primary" onClick={()=>void load()}><Search size={16}/>{t("admin.common.search")}</button></div>
+ {loading?<div className="gls-admin-loading">{t("admin.common.loading")}</div>:items.length===0?<div className="gls-admin-empty-v2">{t("admin.common.noComplaints")}</div>:<div className="gls-admin-table-scroll"><table className="gls-admin-data-table"><thead><tr><th>ID</th><th>{t("admin.complaints.subject")}</th><th>{t("admin.complaints.citizen")}</th><th>{t("admin.complaints.status")}</th><th>{t("admin.complaints.remark")}</th><th>{t("admin.complaints.action")}</th></tr></thead><tbody>{items.map(c=><ComplaintRow key={c._id} c={c} onSave={update}/>)}</tbody></table></div>}</section></div>
+}
+function ComplaintRow({c,onSave}:{c:any;onSave:(id:string,s:string,n:string)=>Promise<void>}){const [s,setS]=useState(c.status);const [n,setN]=useState(c.notes||"");const {t}=useTranslation();return <tr><td><b>{c.complaintId}</b></td><td>{c.subject}</td><td>{c.user?.name||"—"}</td><td><select value={s} onChange={e=>setS(e.target.value)}><option>Submitted</option><option>In Review</option><option>Resolved</option><option>Rejected</option></select></td><td><input value={n} onChange={e=>setN(e.target.value)} placeholder={t("admin.complaints.remark")}/></td><td><button className="gls-icon-primary" onClick={()=>void onSave(c._id,s,n)}><Save size={15}/></button></td></tr>}

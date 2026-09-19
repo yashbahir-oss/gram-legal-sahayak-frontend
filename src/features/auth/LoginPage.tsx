@@ -41,8 +41,12 @@ export default function LoginPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const redirectAfterAuth = (role?: string) => {
+    navigate(role === "admin" ? "/admin/dashboard" : "/", { replace: true });
+  };
+
   useEffect(() => {
-    if (token) navigate("/profile", { replace: true });
+    if (token) redirectAfterAuth(useAuthStore.getState().user?.role);
   }, [token, navigate]);
 
   const resetMessages = () => {
@@ -98,7 +102,7 @@ export default function LoginPage() {
         } else {
           const r = await authApi.verifySignupOtp(mobile, code);
           setAuth(r.token, r.user);
-          navigate("/profile", { replace: true });
+          redirectAfterAuth(r.user.role);
         }
       } else if (mode === "forgot") {
         if (!identifier) throw new Error(t("auth.required"));
@@ -126,7 +130,7 @@ export default function LoginPage() {
         if (!identifier || !password) throw new Error(t("auth.required"));
         const r = await authApi.login(identifier, password);
         setAuth(r.token, r.user);
-        navigate("/profile", { replace: true });
+        redirectAfterAuth(r.user.role);
       } else if (!otpStep) {
         if (!identifier) throw new Error(t("auth.required"));
         const r = await authApi.requestLoginOtp(identifier);
@@ -136,7 +140,7 @@ export default function LoginPage() {
       } else {
         const r = await authApi.verifyLoginOtp(identifier, code);
         setAuth(r.token, r.user);
-        navigate("/profile", { replace: true });
+        redirectAfterAuth(r.user.role);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

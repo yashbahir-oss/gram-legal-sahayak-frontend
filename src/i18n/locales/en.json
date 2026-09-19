@@ -334,6 +334,7 @@
       "desc": "Find nearby government offices and get useful contact information.",
       "district": "Select district",
       "taluka": "Select taluka",
+      "subDistrict": "Select sub-district",
       "search": "Search",
       "near": "Nearby offices",
       "popular": "Popular offices",
@@ -790,6 +791,172 @@
       "title": "Need help understanding an inheritance matter?",
       "description": "Ask AI Sahayak for preliminary information and possible next steps.",
       "action": "Ask AI Sahayak"
+    }
+  },
+  "admin": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "complaints": "Complaints",
+      "users": "Users",
+      "documents": "Documents",
+      "offices": "Offices",
+      "schemes": "Government Schemes",
+      "ai": "AI Sahayak",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    },
+    "header": {
+      "search": "Search complaints, users, or documents...",
+      "notifications": "Notifications"
+    },
+    "profile": {
+      "settings": "Profile / Settings",
+      "logout": "Log out"
+    },
+    "common": {
+      "refresh": "Refresh",
+      "viewAll": "View all",
+      "loading": "Loading...",
+      "noComplaints": "No complaints yet.",
+      "allStatus": "All status",
+      "search": "Search",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "openModule": "Open module"
+    },
+    "dashboard": {
+      "eyebrow": "Administration Panel",
+      "title": "Good morning, Admin!",
+      "subtitle": "Welcome to the Gram Legal Sahayak administration panel.",
+      "complaintFlow": "Complaint flow",
+      "realData": "Based on live MongoDB data",
+      "status": "Complaint status",
+      "recent": "Recent complaints",
+      "latest": "Latest citizen requests",
+      "quickActions": "Quick actions",
+      "systemLive": "System and database connection is active"
+    },
+    "stats": {
+      "complaints": "Total complaints",
+      "users": "Registered users",
+      "offices": "Government offices",
+      "documents": "Documents"
+    },
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "resolved": "Resolved",
+      "rejected": "Rejected",
+      "active": "Active",
+      "inactive": "Inactive",
+      "blocked": "Blocked",
+      "published": "Published",
+      "draft": "Draft",
+      "archived": "Archived"
+    },
+    "quick": {
+      "complaints": "Manage complaints",
+      "users": "Manage users",
+      "documents": "Manage documents",
+      "offices": "Manage offices"
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Manage real users from MongoDB.",
+      "search": "Search name, email or mobile...",
+      "empty": "No users found",
+      "profile": "Profile",
+      "mobile": "Mobile",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "registered": "Registered",
+      "actions": "Actions",
+      "activate": "Activate",
+      "block": "Block",
+      "delete": "Delete",
+      "confirmStatus": "Are you sure you want to change this user's status?",
+      "confirmDelete": "Delete this user permanently?"
+    },
+    "documents": {
+      "title": "Document Management",
+      "subtitle": "Manage real documents stored in MongoDB GridFS.",
+      "add": "Add Document",
+      "edit": "Edit Document",
+      "search": "Search documents...",
+      "empty": "No documents available yet",
+      "titleCol": "Title",
+      "category": "Category",
+      "language": "Language",
+      "status": "Status",
+      "file": "File",
+      "actions": "Actions",
+      "download": "Download",
+      "published": "Published",
+      "draft": "Draft",
+      "archived": "Archived",
+      "confirmDelete": "Delete this document?",
+      "fileRequired": "Title and file are required.",
+      "form": {
+        "title": "Title",
+        "description": "Description",
+        "category": "Category",
+        "type": "Document type",
+        "language": "Language",
+        "status": "Status",
+        "file": "File upload",
+        "thumbnail": "Thumbnail / image"
+      },
+      "fileTooLarge": "File size must be 15 MB or less."
+    },
+    "complaints": {
+      "title": "Complaint Management",
+      "subtitle": "View and act on real complaints from MongoDB.",
+      "search": "Search complaints...",
+      "subject": "Subject",
+      "citizen": "Citizen",
+      "status": "Status",
+      "remark": "Remark / reply",
+      "action": "Action"
+    },
+    "offices": {
+      "title": "Government Offices",
+      "subtitle": "Manage real offices stored in MongoDB.",
+      "add": "Add Office",
+      "edit": "Edit Office",
+      "search": "Search offices...",
+      "empty": "No offices available yet",
+      "name": "Office name",
+      "district": "District",
+      "subDistrict": "Sub-district / Taluka",
+      "address": "Address",
+      "actions": "Actions",
+      "confirmDelete": "Delete this office?"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Statistics based on real MongoDB data.",
+      "complaints": "Daily complaint flow",
+      "users": "User registration",
+      "status": "Complaint status"
+    },
+    "settings": {
+      "title": "Admin Settings",
+      "subtitle": "Manage your administrator account and session.",
+      "role": "Role"
+    },
+    "schemes": {
+      "title": "Government Schemes",
+      "subtitle": "Schemes module",
+      "emptyTitle": "Government Schemes",
+      "empty": "Real scheme management data can be shown here when available from the backend."
+    },
+    "ai": {
+      "title": "AI Sahayak",
+      "subtitle": "AI service and usage monitoring",
+      "emptyTitle": "AI Sahayak",
+      "empty": "Open the existing AI module to use the live AI flow."
     }
   }
 }
