@@ -6,7 +6,7 @@ import { useAuthStore } from "../auth/auth.store";
 import { useLanguageStore, type Language } from "../../store/language.store";
 import { adminApi } from "../../lib/api";
 import { fileUrl } from "../../lib/api";
-
+//className="gls-admin-bell"
 const links = [
   ["dashboard","/admin/dashboard",LayoutDashboard],
   ["complaints","/admin/complaints",MessageSquareWarning],
@@ -33,7 +33,9 @@ export default function AdminLayout(){
 
   useEffect(()=>{
     if(!token || user?.role!=="admin"){ nav("/login",{replace:true}); return; }
-    adminApi.stats().then(s=>setNoticeCount(s.complaintsByStatus.pending)).catch(()=>setNoticeCount(0));
+    adminApi.stats()
+  .then(s => setNoticeCount(s.notificationCount ?? 0))
+  .catch(() => setNoticeCount(0));
   },[token,user?.role,nav]);
 
   useEffect(()=>{
@@ -44,6 +46,19 @@ export default function AdminLayout(){
   const changeLanguage=async(lang:Language)=>{
     await i18n.changeLanguage(lang); setLanguage(lang); document.documentElement.lang=lang; setLangOpen(false);
   };
+
+//   const openNotifications = async () => {
+//   try {
+//     if (noticeCount > 0) {
+//       await adminApi.clearNotifications();
+//       setNoticeCount(0);
+//     }
+//   } catch {
+//     // Keep navigation working even if notification clear fails.
+//   }
+
+//   nav("/admin/complaints");
+// };
   const logoutAdmin=async()=>{ try{ await import("../../lib/api").then(m=>m.authApi.logout()); }catch{} logout(); nav("/login",{replace:true}); };
 
   if(!token || user?.role!=="admin") return null;
@@ -75,6 +90,8 @@ export default function AdminLayout(){
             {langOpen&&<div className="gls-admin-language-menu">{(["mr","en","hi"] as Language[]).map(l=><button key={l} className={language===l?"selected":""} onClick={()=>changeLanguage(l)}>{l==="mr"?"मराठी":l==="hi"?"हिन्दी":"English"}</button>)}</div>}
           </div>
           <button className="gls-admin-bell" title={t("admin.header.notifications")} onClick={()=>nav("/admin/complaints")}><Bell size={19}/>{noticeCount>0&&<b>{noticeCount}</b>}</button>
+
+
           <div className="gls-admin-head-profile" onClick={()=>nav("/admin/settings")}>
             {user.profileImage?<img src={fileUrl(user.profileImage)} alt="" />:<div><Users size={17}/></div>}
             <span><b>{user.name}</b><small>Administrator</small></span>

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { authApi, fileUrl, uploadProfileImage } from "../../lib/api";
 import { useAuthStore } from "./auth.store";
-
+//<div className="gls-otp-panel" style={{ marginTop: "20px" }}>
 export default function ProfilePage() {
   const { t } = useTranslation();
   const nav = useNavigate();
@@ -18,6 +18,11 @@ export default function ProfilePage() {
   const [otpSent, setOtpSent] = useState(false);
   const [devOtp, setDevOtp] = useState("");
   const [msg, setMsg] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+const [newPassword, setNewPassword] = useState("");
+const [confirmPassword, setConfirmPassword] = useState("");
+const [passwordSaving, setPasswordSaving] = useState(false);
+const [showPasswordChange, setShowPasswordChange] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
 
   if (!token || !user) { nav("/login", { replace: true }); return null; }
@@ -32,16 +37,30 @@ export default function ProfilePage() {
     } catch (e) { setMsg(e instanceof Error ? e.message : "Error"); }
   };
 
-  const sendOtp = async () => {
-    if (!user.mobile && !user.email) { setMsg("A verified mobile/email is required."); return; }
-    setOtpBusy(true); setMsg("");
-    try {
-      const r = await authApi.requestLoginOtp(user.mobile || user.email || "");
-      setOtpSent(true); setDevOtp(r.devOtp || "");
-      setMsg(t("auth.otpSent", "OTP sent. Enter it to confirm contact changes."));
-    } catch (e) { setMsg(e instanceof Error ? e.message : "Unable to send OTP"); }
-    finally { setOtpBusy(false); }
-  };
+ const sendOtp = async () => {
+  setOtpBusy(true);
+  setMsg("");
+
+  try {
+    const r = await authApi.requestContactOtp();
+
+    setOtpSent(true);
+    setDevOtp(r.devOtp || "");
+
+    setMsg(
+      t(
+        "auth.otpSent",
+        "OTP generated. Enter it to confirm contact changes."
+      )
+    );
+  } catch (e) {
+    setMsg(
+      e instanceof Error ? e.message : "Unable to generate OTP"
+    );
+  } finally {
+    setOtpBusy(false);
+  }
+};
 
   const save = async () => {
     if (contactChanged && !otp) {
@@ -56,6 +75,46 @@ export default function ProfilePage() {
     } catch (e) { setMsg(e instanceof Error ? e.message : "Error"); }
     finally { setSaving(false); }
   };
+  const changePassword = async () => {
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    setMsg("Please fill all password fields.");
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    setMsg("New password and confirm password do not match.");
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    setMsg("New password must be at least 6 characters.");
+    return;
+  }
+
+  setPasswordSaving(true);
+  setMsg("");
+
+  try {
+    const r = await authApi.changePassword(
+      currentPassword,
+      newPassword
+    );
+
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
+    setMsg(r.message || "Password changed successfully.");
+  } catch (e) {
+    setMsg(
+      e instanceof Error
+        ? e.message
+        : "Unable to change password"
+    );
+  } finally {
+    setPasswordSaving(false);
+  }
+};
 
   return <main className="gls-profile-page">
     <div className="gls-shell gls-profile-card">
@@ -85,6 +144,72 @@ export default function ProfilePage() {
         <button onClick={() => void save()} disabled={saving} className="gls-primary-btn">
           <Save size={16}/>{saving?t("auth.pleaseWait"):t("profile.save")}
         </button>
+        <div className="gls-otp-panel" style={{ marginTop: "20px" }}>
+  <button
+    type="button"
+    onClick={() => setShowPasswordChange(v => !v)}
+    className="gls-secondary-btn"
+    style={{
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    }}
+  >
+    <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <ShieldCheck size={18} />
+      Change Password
+    </span>
+
+    <span>{showPasswordChange ? "▲" : "▼"}</span>
+  </button>
+
+  {showPasswordChange && (
+    <div style={{ marginTop: "16px" }}>
+      <label>
+        Current Password
+        <input
+          type="password"
+          value={currentPassword}
+          onChange={e => setCurrentPassword(e.target.value)}
+          placeholder="Enter current password"
+          autoComplete="current-password"
+        />
+      </label>
+
+      <label>
+        New Password
+        <input
+          type="password"
+          value={newPassword}
+          onChange={e => setNewPassword(e.target.value)}
+          placeholder="Enter new password"
+          autoComplete="new-password"
+        />
+      </label>
+
+      <label>
+        Confirm New Password
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={e => setConfirmPassword(e.target.value)}
+          placeholder="Confirm new password"
+          autoComplete="new-password"
+        />
+      </label>
+
+      <button
+        type="button"
+        onClick={() => void changePassword()}
+        disabled={passwordSaving}
+        className="gls-secondary-btn"
+      >
+        {passwordSaving ? "Changing..." : "Change Password"}
+      </button>
+    </div>
+  )}
+</div>
         {msg&&<p className="gls-login-notice">{msg}</p>}
       </div>
 

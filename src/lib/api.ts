@@ -1,5 +1,5 @@
 const API = (import.meta.env.VITE_API_URL || "http://localhost:4000/api").replace(/\/$/, "");
-//officeLocations:
+//authApi
 let refreshPromise: Promise<string | null> | null = null;
 
 async function refreshSession(): Promise<string | null> {
@@ -72,6 +72,24 @@ export type AuthResponse = { token: string; user: User; devOtp?: string; message
 
 export const authApi = {
   login: (identifier: string, password: string) => request<AuthResponse>("/auth/login", { method: "POST", body: JSON.stringify({ identifier, password }) }),
+  requestContactOtp: () =>
+  request<{ message: string; devOtp?: string }>("/auth/me/contact-otp", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("gls_token") || ""}`,
+    },
+  }),
+  changePassword: (
+  currentPassword: string,
+  newPassword: string
+) =>
+  request<{ message: string }>("/auth/password/change", {
+    method: "POST",
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+    }),
+  }),
   requestLoginOtp: (identifier: string) => request<{ message: string; devOtp?: string }>("/auth/otp/request", { method: "POST", body: JSON.stringify({ identifier }) }),
   verifyLoginOtp: (identifier: string, code: string) => request<AuthResponse>("/auth/otp/verify", { method: "POST", body: JSON.stringify({ identifier, code }) }),
   requestPasswordReset: (identifier: string) => request<{ message: string; devOtp?: string }>("/auth/password/forgot", { method: "POST", body: JSON.stringify({ identifier }) }),
@@ -144,12 +162,17 @@ export type AdminStats = {
   totalComplaints: number;
   totalDocuments: number;
   totalOffices: number;
+  notificationCount: number;
   complaintsByStatus: { pending: number; processing: number; resolved: number; rejected: number };
   recentComplaints: any[];
 };
 
 export const adminApi = {
   stats: () => request<AdminStats>("/admin/dashboard/stats"),
+  clearNotifications: () =>
+  request<{ ok: boolean; clearedAt: string }>("/admin/notifications/clear", {
+    method: "POST",
+  }),
   complaintsTrend: (days = 14) => request<{ trend: { date: string; count: number }[] }>(`/admin/dashboard/complaints-trend?days=${days}`),
   complaintsStatus: () => request<{ statuses: { status: string; count: number }[] }>("/admin/dashboard/complaints-status"),
   usersTrend: (days = 14) => request<{ trend: { date: string; count: number }[] }>(`/admin/dashboard/users-trend?days=${days}`),
